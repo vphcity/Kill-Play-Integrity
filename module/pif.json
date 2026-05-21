@@ -1,10 +1,10 @@
 {
-  "PRODUCT": "crownltexx",
-  "DEVICE": "crownlte",
-  "MANUFACTURER": "samsung",
-  "BRAND": "samsung",
-  "MODEL": "SM-N960F",
-  "FINGERPRINT": "samsung/crownltexx/crownlte:8.1.0/M1AJQ/N960FXXU1ARH5:user/release-keys",
-  "SECURITY_PATCH": "2018-08-01",
-  "DEVICE_INITIAL_SDK_INT": "26"
+  "PRODUCT": "Lava_LZX409_EEA",
+  "DEVICE": "Lava_LZX409",
+  "MANUFACTURER": "Lava",
+  "BRAND": "Lava",
+  "MODEL": "Lava Blaze 2",
+  "FINGERPRINT": "Lava/Lava_LZX409_EEA/Lava_LZX409:13/TP1A.220624.014/1698314545:user/release-keys",
+  "SECURITY_PATCH": "2023-10-05",
+  "DEVICE_INITIAL_SDK_INT": "33"
 }
