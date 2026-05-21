@@ -1,10 +1,10 @@
 {
-  "PRODUCT": "Lava_LXX501",
-  "DEVICE": "Lava_LXX501",
+  "PRODUCT": "Lava_Z62",
+  "DEVICE": "Lava_Z62",
   "MANUFACTURER": "Lava",
   "BRAND": "Lava",
-  "MODEL": "Lava Agni 5G",
-  "FINGERPRINT": "Lava/Lava_LXX501/Lava_LXX501:11/RP1A.200720.011/1636110373:user/release-keys",
-  "SECURITY_PATCH": "2021-10-05",
-  "DEVICE_INITIAL_SDK_INT": "30"
+  "MODEL": "Lava Z62",
+  "FINGERPRINT": "Lava/Lava_Z62/Lava_Z62:9/P00610/1566373763:user/release-keys",
+  "SECURITY_PATCH": "2019-08-05",
+  "DEVICE_INITIAL_SDK_INT": "28"
 }
