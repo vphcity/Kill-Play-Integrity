@@ -11,6 +11,7 @@ resetprop ro.boot.vbmeta.device_state "locked"
 resetprop ro.boot.verifiedbootstate "green"
 resetprop ro.boot.flash.locked "1"
 resetprop ro.boot.selinux "enforcing"
+resetprop -n ro.hardware.keystore "none"
 
 # Hide Magisk/Root props
 resetprop ro.debuggable "0"
