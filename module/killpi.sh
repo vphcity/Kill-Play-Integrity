@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# killpi.sh by osm0sis @ xda-developers
+# killpi.sh by Nox @ CCraft Space
 #
 # Kill the Google Play services DroidGuard and Play Store processes
 # (com.google.android.gms.unstable and com.android.vending)

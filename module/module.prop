@@ -1,7 +1,7 @@
 id=playintegrityfix
-name=Play Integrity Fork
+name=Kill Play Integrity
 version=v16
 versionCode=164000
-author=osm0sis & chiteroman @ xda-developers
+author=Nox & vphcity @ CCraft Space
 description=Fix <A13 Play Integrity DEVICE verdict
-updateJson=https://raw.githubusercontent.com/osm0sis/PlayIntegrityFork/main/update.json
+updateJson=https://raw.githubusercontent.com/Nox/PlayIntegrityModule/main/update.json

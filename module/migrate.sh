@@ -7,7 +7,7 @@ case "$1" in
   -h|--help|help) echo "sh migrate.sh [-f] [-o] [-a] [-p|-j] [in-file] [out-file]"; exit 0;;
   -i|--install|install) INSTALL=1; shift;;
   *) echo "custom.pif.prop/.json migration script \
-    $N  by osm0sis @ xda-developers $N";;
+    $N  by Nox @ CCraft Space $N";;
 esac;
 
 item() { echo "- $@"; }
