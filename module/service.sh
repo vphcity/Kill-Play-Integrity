@@ -1,9 +1,22 @@
 #!/system/bin/sh
-# 🌟 Advanced Kill Play Integrity Module - By Nox & Advanced AI 🌟
+# 🌟 Advanced Kill Play Integrity Module - By Nox & 🌟
 
 MODDIR=${0%/*}
 GMS_PATH="/data/data/com.google.android.gms"
 RAW_URL="https://raw.githubusercontent.com/vphcity/Kill-Play-Integrity/main/module"
+
+# Force Bootloader status to locked
+resetprop ro.boot.flash.locked "1"
+resetprop ro.boot.vbmeta.device_state "locked"
+resetprop ro.boot.verifiedbootstate "green"
+resetprop ro.boot.flash.locked "1"
+resetprop ro.boot.selinux "enforcing"
+
+# Hide Magisk/Root props
+resetprop ro.debuggable "0"
+resetprop ro.secure "1"
+resetprop ro.build.type "user"
+resetprop ro.build.tags "release-keys"
 
 # وظيفة التحديث الذاتي
 update_module() {
