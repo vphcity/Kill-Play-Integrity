@@ -1,10 +1,7 @@
 {
-  "PRODUCT": "TB-X606F",
-  "DEVICE": "TB-X606F",
-  "MANUFACTURER": "Lenovo",
-  "BRAND": "Lenovo",
-  "MODEL": "Lenovo TB-X606F",
-  "FINGERPRINT": "Lenovo/TB-X606F/TB-X606F:11/RP1A.200720.011/S000034_220115_ROW:user/release-keys",
-  "SECURITY_PATCH": "2022-01-05",
-  "DEVICE_INITIAL_SDK_INT": "29"
+  "MANUFACTURER": "Google",
+  "MODEL": "Pixel 7 Pro",
+  "FINGERPRINT": "google/cheetah/cheetah:14/AP1A.240505.005/11746680:user/release-keys",
+  "SECURITY_PATCH": "2024-05-05",
+  "FIRST_API_LEVEL": "33"
 }
