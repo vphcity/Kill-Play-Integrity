@@ -1,10 +1,10 @@
 {
-  "PRODUCT": "Lava_LZX409_EEA",
-  "DEVICE": "Lava_LZX409",
+  "PRODUCT": "Lava_LXX501",
+  "DEVICE": "Lava_LXX501",
   "MANUFACTURER": "Lava",
   "BRAND": "Lava",
-  "MODEL": "Lava Blaze 2",
-  "FINGERPRINT": "Lava/Lava_LZX409_EEA/Lava_LZX409:13/TP1A.220624.014/1698314545:user/release-keys",
-  "SECURITY_PATCH": "2023-10-05",
-  "DEVICE_INITIAL_SDK_INT": "33"
+  "MODEL": "Lava Agni 5G",
+  "FINGERPRINT": "Lava/Lava_LXX501/Lava_LXX501:11/RP1A.200720.011/1636110373:user/release-keys",
+  "SECURITY_PATCH": "2021-10-05",
+  "DEVICE_INITIAL_SDK_INT": "30"
 }
