@@ -1,41 +1,51 @@
 #!/system/bin/sh
-# 🌟 Advanced Kill Play Integrity Module - By Nox  🌟
+# 🌟 Advanced Kill Play Integrity Module - By Nox & Advanced AI 🌟
 
 MODDIR=${0%/*}
 GMS_PATH="/data/data/com.google.android.gms"
+RAW_URL="https://raw.githubusercontent.com/vphcity/Kill-Play-Integrity/main/module"
+
+# وظيفة التحديث الذاتي
+update_module() {
+    echo "[*] Checking for updates..."
+    curl -s "$RAW_URL/service.sh" -o "$MODDIR/service.sh.tmp"
+    if [ $? -eq 0 ]; then
+        mv "$MODDIR/service.sh.tmp" "$MODDIR/service.sh"
+        chmod +x "$MODDIR/service.sh"
+        echo "[+] Module updated! Please run the command again."
+        exit 0
+    else
+        echo "[-] Update failed."
+    fi
+}
+
+# التحقق من الأوامر
+if [ "$1" = "update" ]; then
+    update_module
+fi
 
 echo "=========================================="
 echo "💀 INITIATING ADVANCED PIF BYPASS 💀"
 echo "=========================================="
 
-# 1. 
-echo "[*] Downloading the latest encrypted fingerprint..."
-curl -s "https://raw.githubusercontent.com/vphcity/Kill-Play-Integrity/main/module/pif.json" -o "$MODDIR/pif.json"
+# 1. سحب البصمة الحصرية
+echo "[*] Downloading the latest fingerprint..."
+curl -s "$RAW_URL/pif.json" -o "$MODDIR/pif.json"
 
-if [ -f "$MODDIR/pif.json" ]; then
-    echo "[+] Fingerprint loaded successfully!"
-else
-    echo "[-] ERROR: Fetch failed. Check your connection."
+if [ ! -f "$MODDIR/pif.json" ]; then
+    echo "[-] ERROR: Fetch failed."
     exit 1
 fi
 
-# 2. 
+# 2. تدمير ذاكرة جوجل و الـ DroidGuard
 echo "[*] Executing deep GMS database wipe..."
-if [ -d "$GMS_PATH/databases" ]; then
-    rm -rf $GMS_PATH/databases/gservices.db* 2>/dev/null
-    rm -rf $GMS_PATH/databases/dg.db* 2>/dev/null
-    echo "[+] Google's memory wiped clean."
-fi
-
-# 3. 
-echo "[*] Purging GMS cache & DroidGuard..."
+rm -rf $GMS_PATH/databases/gservices.db* 2>/dev/null
+rm -rf $GMS_PATH/databases/dg.db* 2>/dev/null
 rm -rf $GMS_PATH/cache/* 2>/dev/null
 rm -rf $GMS_PATH/app_dg_cache/* 2>/dev/null
 
-# 4. إ
-echo "[*] Terminating GMS processes..."
-killall com.google.android.gms >/dev/null 2>&1
-killall com.google.android.gms.unstable >/dev/null 2>&1
+# 3. إعادة التشغيل
+killall com.google.android.gms com.google.android.gms.unstable >/dev/null 2>&1
 
 echo "=========================================="
 echo "🔥 DONE! SYSTEM IS READY. TEST NOW! 🔥"
