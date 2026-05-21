@@ -1,10 +1,10 @@
 {
-  "PRODUCT": "Lava_Z62",
-  "DEVICE": "Lava_Z62",
+  "PRODUCT": "Lava_LXX505",
+  "DEVICE": "Lava_LXX505",
   "MANUFACTURER": "Lava",
   "BRAND": "Lava",
-  "MODEL": "Lava Z62",
-  "FINGERPRINT": "Lava/Lava_Z62/Lava_Z62:9/P00610/1566373763:user/release-keys",
-  "SECURITY_PATCH": "2019-08-05",
-  "DEVICE_INITIAL_SDK_INT": "28"
+  "MODEL": "Lava Yuva 3 Pro",
+  "FINGERPRINT": "Lava/Lava_LXX505/Lava_LXX505:13/TP1A.220624.014/1701314545:user/release-keys",
+  "SECURITY_PATCH": "2023-12-05",
+  "DEVICE_INITIAL_SDK_INT": "33"
 }
