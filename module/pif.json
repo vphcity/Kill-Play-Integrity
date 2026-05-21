@@ -1,10 +1,10 @@
 {
-  "PRODUCT": "garnet_global",
-  "DEVICE": "garnet",
-  "MANUFACTURER": "Xiaomi",
-  "BRAND": "Xiaomi",
-  "MODEL": "Redmi Note 13 Pro 5G",
-  "FINGERPRINT": "Xiaomi/garnet_global/garnet:14/UKQ1.230917.001/V816.0.8.0.UNRMIXM:user/release-keys",
-  "SECURITY_PATCH": "2024-03-01",
-  "DEVICE_INITIAL_SDK_INT": "25"
+  "PRODUCT": "crownltexx",
+  "DEVICE": "crownlte",
+  "MANUFACTURER": "samsung",
+  "BRAND": "samsung",
+  "MODEL": "SM-N960F",
+  "FINGERPRINT": "samsung/crownltexx/crownlte:8.1.0/M1AJQ/N960FXXU1ARH5:user/release-keys",
+  "SECURITY_PATCH": "2018-08-01",
+  "DEVICE_INITIAL_SDK_INT": "26"
 }
