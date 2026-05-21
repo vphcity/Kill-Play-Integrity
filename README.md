@@ -32,3 +32,4 @@ When Play Integrity drops to red Failed do not touch the module Just open Termux
 
 ```bash
 su -c "sh /data/adb/modules/playintegrityfix/service.sh click"
+
