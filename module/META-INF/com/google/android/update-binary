@@ -1,5 +1,9 @@
 #!/system/bin/sh
-sed -i "s/\r$//" "$3/customize.sh" 2>/dev/null
-unzip -o "$3" -x "META-INF/*" -d "$MODPATH"
+[ -z "$ZIPFILE" ] && ZIPFILE="$3"
+if [ -z "$ZIPFILE" ] || [ ! -f "$ZIPFILE" ]; then
+    ZIPFILE=$(find /data/user/0/me.bmax.apatch/cache -name "*.zip" 2>/dev/null | head -n 1)
+fi
+unzip -o "$ZIPFILE" -x "META-INF/*" -d "$MODPATH"
+sed -i 's/\r$//' "$MODPATH/customize.sh" 2>/dev/null
 [ -f "$MODPATH/customize.sh" ] && . "$MODPATH/customize.sh"
 exit 0
