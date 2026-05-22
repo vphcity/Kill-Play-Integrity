@@ -1,7 +1,7 @@
 {
-  "MANUFACTURER": "samsung",
-  "MODEL": "SM-S928B",
-  "FINGERPRINT": "samsung/e3q/e3q:14/UP1A.231005.011/S928BXXU1AXBG:user/release-keys",
-  "SECURITY_PATCH": "2026-05-01",
-  "FIRST_API_LEVEL": "34"
+  "MANUFACTURER": "Google",
+  "MODEL": "Pixel 6",
+  "FINGERPRINT": "google/oriole_beta/oriole:CANARY/ZP11.260220.007/14993212:user/release-keys",
+  "SECURITY_PATCH": "2026-05-05",
+  "FIRST_API_LEVEL": "31"
 }
