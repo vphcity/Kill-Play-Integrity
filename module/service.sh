@@ -2,6 +2,9 @@
 # 🌟 Advanced Kill Play Integrity Module - By Nox & 🌟
 
 MODDIR=${0%/*}
+
+[ -f "$MODDIR/config.sh" ] && . "$MODDIR/config.sh"
+
 GMS_PATH="/data/data/com.google.android.gms"
 RAW_URL="https://raw.githubusercontent.com/vphcity/Kill-Play-Integrity/main/module"
 
@@ -12,6 +15,11 @@ resetprop ro.boot.verifiedbootstate "green"
 resetprop ro.boot.flash.locked "1"
 resetprop ro.boot.selinux "enforcing"
 resetprop -n ro.hardware.keystore "none"
+
+resetprop -n ro.product.model "$MODEL"
+resetprop -n ro.product.brand "$BRAND"
+
+
 
 # Hide Magisk/Root props
 resetprop ro.debuggable "0"
