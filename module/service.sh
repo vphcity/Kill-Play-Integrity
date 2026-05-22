@@ -16,8 +16,17 @@ resetprop ro.boot.flash.locked "1"
 resetprop ro.boot.selinux "enforcing"
 resetprop -n ro.hardware.keystore "none"
 
-resetprop -n ro.product.model "$MODEL"
-resetprop -n ro.product.brand "$BRAND"
+# ... (config.sh) ...
+
+
+if [ "$SPOOF_BUILD" = "true" ]; then
+    resetprop -n ro.product.model "$MODEL"
+    resetprop -n ro.product.brand "$BRAND"
+    resetprop -n ro.product.name "$PRODUCT"
+    resetprop -n ro.product.device "$DEVICE"
+    resetprop -n ro.build.product "$PRODUCT"
+fi
+
 
 
 
@@ -27,7 +36,7 @@ resetprop ro.secure "1"
 resetprop ro.build.type "user"
 resetprop ro.build.tags "release-keys"
 
-# وظيفة التحديث الذاتي
+
 update_module() {
     echo "[*] Checking for updates..."
     curl -s "$RAW_URL/service.sh" -o "$MODDIR/service.sh.tmp"
