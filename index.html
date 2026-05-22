@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kill Play Integrity — by Nox</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050508;
+    --surface: #0a0a12;
+    --card: #0d0d18;
+    --border: #1a1a30;
+    --accent: #00ff88;
+    --accent2: #00c4ff;
+    --accent3: #ff3c6e;
+    --text: #c8d0e0;
+    --text-dim: #556070;
+    --glow: 0 0 20px rgba(0,255,136,0.4);
+    --glow2: 0 0 20px rgba(0,196,255,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCANLINE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,255,136,0.015) 2px,
+      rgba(0,255,136,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ─── NOISE TEXTURE ─── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.5;
+    z-index: 999;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 60px 20px;
+    overflow: hidden;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+  }
+
+  @keyframes gridDrift {
+    from { transform: translateY(0); }
+    to { transform: translateY(60px); }
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,255,136,0.08) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  }
+
+  .badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    border: 1px solid rgba(0,255,136,0.3);
+    padding: 6px 16px;
+    border-radius: 2px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(40px, 8vw, 90px);
+    font-weight: 900;
+    line-height: 1;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 0.6s 0.15s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .hero-title span.kill {
+    color: var(--accent3);
+    text-shadow: 0 0 30px rgba(255,60,110,0.6);
+  }
+
+  .hero-title span.pi {
+    color: var(--accent);
+    text-shadow: var(--glow);
+  }
+
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+  .glitch::before {
+    color: var(--accent2);
+    animation: glitch1 3s infinite;
+    clip-path: polygon(0 30%, 100% 30%, 100% 55%, 0 55%);
+  }
+  .glitch::after {
+    color: var(--accent3);
+    animation: glitch2 3s infinite;
+    clip-path: polygon(0 65%, 100% 65%, 100% 80%, 0 80%);
+  }
+  @keyframes glitch1 {
+    0%, 90%, 100% { transform: translateX(0); opacity: 0; }
+    92% { transform: translateX(-3px); opacity: 0.8; }
+    94% { transform: translateX(3px); opacity: 0; }
+    96% { transform: translateX(-2px); opacity: 0.6; }
+  }
+  @keyframes glitch2 {
+    0%, 88%, 100% { transform: translateX(0); opacity: 0; }
+    90% { transform: translateX(3px); opacity: 0.8; }
+    92% { transform: translateX(-3px); opacity: 0; }
+    94% { transform: translateX(2px); opacity: 0.5; }
+  }
+
+  .hero-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-top: 20px;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 0.6s 0.3s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 40px;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 0.6s 0.45s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .meta-chip {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    border-radius: 2px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .meta-chip .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: var(--glow);
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  .hero-cta {
+    margin-top: 50px;
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 0.6s 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .btn-primary {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 16px 40px;
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    transition: all 0.2s;
+    display: inline-block;
+    box-shadow: 0 0 40px rgba(0,255,136,0.3);
+  }
+  .btn-primary:hover {
+    background: #00ffaa;
+    box-shadow: 0 0 60px rgba(0,255,136,0.6);
+    transform: translateY(-2px);
+  }
+
+  /* ─── SECTION ─── */
+  section {
+    padding: 100px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+    opacity: 0.3;
+    max-width: 200px;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 700;
+    margin-bottom: 50px;
+    color: #fff;
+  }
+
+  /* ─── CARDS GRID ─── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .card {
+    background: var(--card);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .card:hover { background: #10101e; }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .card-desc {
+    font-size: 15px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .card-file {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+
+  /* ─── FLOW DIAGRAM ─── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 20px;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .flow-step:hover { border-color: rgba(0,255,136,0.3); }
+
+  .flow-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--accent);
+    min-width: 36px;
+    height: 36px;
+    border: 1px solid rgba(0,255,136,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,255,136,0.05);
+  }
+
+  .flow-content strong {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: #fff;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .flow-content p {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+
+  /* ─── TERMINAL ─── */
+  .terminal-wrap {
+    background: #000;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .terminal-header {
+    background: #0a0a0a;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .t-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .t-dot.r { background: #ff5f56; }
+  .t-dot.y { background: #ffbd2e; }
+  .t-dot.g { background: #27c93f; }
+
+  .terminal-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-left: 8px;
+    letter-spacing: 2px;
+  }
+
+  .terminal-body {
+    padding: 28px 24px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .t-comment { color: #4a5568; }
+  .t-prompt { color: var(--accent2); }
+  .t-cmd { color: var(--accent); }
+  .t-out { color: #a0aec0; padding-left: 20px; font-size: 12px; }
+  .t-separator { height: 1px; background: var(--border); margin: 16px 0; }
+  .t-warn { color: var(--accent3); }
+
+  /* ─── WARNING BOX ─── */
+  .warn-box {
+    border: 1px solid rgba(255,60,110,0.3);
+    background: rgba(255,60,110,0.04);
+    padding: 24px 28px;
+    margin-top: 50px;
+    position: relative;
+  }
+  .warn-box::before {
+    content: '⚠ IMPORTANT NOTE';
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    color: var(--accent3);
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 12px;
+  }
+  .warn-box p {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+  .warn-box code {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--accent2);
+    font-size: 12px;
+    background: rgba(0,196,255,0.08);
+    padding: 2px 6px;
+  }
+
+  /* ─── PLATFORMS ─── */
+  .platform-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .platform-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 10px 22px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    transition: all 0.2s;
+  }
+  .platform-tag:hover {
+    border-color: rgba(0,255,136,0.4);
+    color: var(--accent);
+    background: rgba(0,255,136,0.05);
+  }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 auto;
+    max-width: 1100px;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+  footer .footer-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    color: var(--accent);
+    margin-bottom: 12px;
+    text-shadow: var(--glow);
+  }
+  footer a { color: var(--accent2); text-decoration: none; }
+  footer a:hover { color: var(--accent); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── VERSION TAG ─── */
+  .ver-tag {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    border: 1px solid rgba(0,255,136,0.2);
+    padding: 6px 12px;
+    background: rgba(0,255,136,0.04);
+    z-index: 10;
+  }
+
+  /* ─── COPY BUTTON ─── */
+  .copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover {
+    color: var(--accent);
+    border-color: rgba(0,255,136,0.4);
+  }
+
+  @media (max-width: 600px) {
+    .hero-meta { gap: 12px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .ver-tag { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── HERO ─── -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="ver-tag">V16.0-NOX</div>
+
+  <div class="badge">◈ Android Root Module</div>
+
+  <h1 class="hero-title">
+    <span class="kill">KILL</span>&nbsp;
+    <span class="glitch pi" data-text="PLAY INTEGRITY">PLAY INTEGRITY</span>
+  </h1>
+
+  <p class="hero-sub">ADVANCED DYNAMIC SYSTEM-LEVEL BYPASS — HARDWARE &amp; BASIC ATTESTATION</p>
+
+  <div class="hero-meta">
+    <div class="meta-chip"><span class="dot"></span> MAGISK</div>
+    <div class="meta-chip"><span class="dot"></span> APATCH</div>
+    <div class="meta-chip"><span class="dot"></span> KSU</div>
+    <div class="meta-chip" style="--accent:#00c4ff;">
+      <span class="dot" style="background:var(--accent2); box-shadow:var(--glow2);"></span> ZYGISK READY
+    </div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#overview" class="btn-primary">EXPLORE MODULE ↓</a>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ─── OVERVIEW ─── -->
+<section id="overview">
+  <div class="section-label reveal">01 — CORE FILES</div>
+  <h2 class="section-title reveal">Module Structure</h2>
+
+  <div class="cards-grid reveal">
+    <div class="card">
+      <span class="card-icon">⚙</span>
+      <div class="card-file">module.prop</div>
+      <div class="card-title">Module Identity</div>
+      <p class="card-desc">Stores module identity, version string, and metadata used by the root manager to identify and manage the module lifecycle.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🧠</span>
+      <div class="card-file">service.sh</div>
+      <div class="card-title">Runtime Brain</div>
+      <p class="card-desc">Executes late in the boot process for system stability. Handles dynamic property patching, cache management, and remote update commands.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔑</span>
+      <div class="card-file">pif.json</div>
+      <div class="card-title">Fingerprint Config</div>
+      <p class="card-desc">Core configuration holding unbanned build fingerprints, security patch dates, and hardware attestation levels. Auto-refreshed remotely.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── HOW IT WORKS ─── -->
+<section id="how">
+  <div class="section-label reveal">02 — SYSTEM HOOKS</div>
+  <h2 class="section-title reveal">How the Bypass Works</h2>
+
+  <div class="flow reveal">
+    <div class="flow-step">
+      <div class="flow-num">01</div>
+      <div class="flow-content">
+        <strong>SELinux Protection</strong>
+        <p>Forces correct SELinux states for the GMS sandbox, preventing integrity checks from detecting policy violations.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">02</div>
+      <div class="flow-content">
+        <strong>Bootloader State Spoofing</strong>
+        <p>Hides unlocked status by force-resetting manufacturer-specific flags during the late boot phase.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">03</div>
+      <div class="flow-content">
+        <strong>Zygisk Injection</strong>
+        <p>Intercepts GMS attestation methods at the process level, ensuring both Basic and Hardware integrity checks pass successfully.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">04</div>
+      <div class="flow-content">
+        <strong>Dynamic Property Patching</strong>
+        <p>Resets and patches sensitive boot properties at runtime, matching a clean certified device profile defined in pif.json.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn-box reveal">
+    <p>
+      Remove <code>com.google.android.gms</code> from any Denylist or Hide list in your root manager (Magisk / APatch / KSU) for the hooks to work properly.
+    </p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── COMMANDS ─── -->
+<section id="commands">
+  <div class="section-label reveal">03 — TERMUX COMMANDS</div>
+  <h2 class="section-title reveal">Dynamic Update System</h2>
+
+  <p class="reveal" style="color:var(--text-dim); margin-bottom:30px; font-weight:300;">
+    Google constantly bans fingerprints. Instead of reflashing the ZIP every time, the module ships a remote dynamic updater — run it directly from Termux.
+  </p>
+
+  <!-- CMD 1 -->
+  <div class="reveal" style="margin-bottom:24px;">
+    <div style="font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--accent2); letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">
+      🔄 Fetch Latest Fingerprint
+    </div>
+    <div class="terminal-wrap">
+      <div class="terminal-header">
+        <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+        <span class="terminal-label">TERMUX — ROOT SHELL</span>
+      </div>
+      <button class="copy-btn" onclick="copyCmd(this, 'su -c \"sh /data/adb/modules/playintegrityfix/service.sh click\"')">COPY</button>
+      <div class="terminal-body">
+        <div class="t-comment"># Fetch latest unbanned fingerprint and refresh GMS</div>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">su -c "sh /data/adb/modules/playintegrityfix/service.sh click"</span></div>
+        <div class="t-out">→ Fetching remote fingerprint...</div>
+        <div class="t-out">→ Updating pif.json...</div>
+        <div class="t-out">→ Refreshing GMS cache...</div>
+        <div class="t-out" style="color:var(--accent);">✓ Done. Reboot recommended.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CMD 2 -->
+  <div class="reveal">
+    <div style="font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--accent2); letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">
+      ⬆ Self-Update Module Core
+    </div>
+    <div class="terminal-wrap">
+      <div class="terminal-header">
+        <div class="t-dot r"></div><div class="t-dot y"></div><div class="t-dot g"></div>
+        <span class="terminal-label">TERMUX — ROOT SHELL</span>
+      </div>
+      <button class="copy-btn" onclick="copyCmd(this, 'su -c \"sh /data/adb/modules/playintegrityfix/service.sh update\"')">COPY</button>
+      <div class="terminal-body">
+        <div class="t-comment"># Update the module script itself from GitHub</div>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">su -c "sh /data/adb/modules/playintegrityfix/service.sh update"</span></div>
+        <div class="t-out">→ Checking latest release on GitHub...</div>
+        <div class="t-out">→ Downloading module update...</div>
+        <div class="t-out">→ Applying update...</div>
+        <div class="t-out" style="color:var(--accent);">✓ Module updated to latest version.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ─── COMPATIBILITY ─── -->
+<section id="compat">
+  <div class="section-label reveal">04 — COMPATIBILITY</div>
+  <h2 class="section-title reveal">Supported Platforms</h2>
+
+  <div class="platform-row reveal">
+    <div class="platform-tag">🪄 Magisk</div>
+    <div class="platform-tag">🔧 APatch</div>
+    <div class="platform-tag">⚡ KernelSU (KSU)</div>
+    <div class="platform-tag">🤖 Android (Zygisk)</div>
+  </div>
+
+  <div class="cards-grid reveal" style="margin-top:40px;">
+    <div class="card">
+      <div class="card-title">Basic Attestation</div>
+      <p class="card-desc">Passes the standard Play Integrity Basic level check, satisfying most apps that verify device integrity before running.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Hardware Attestation</div>
+      <p class="card-desc">Advanced spoofing to pass the Hardware-level attestation by intercepting Zygisk-level GMS hooks with a valid certified fingerprint.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Dynamic Fingerprints</div>
+      <p class="card-desc">Remote fingerprint rotation via a single Termux command — no reflashing needed when Google bans the current fingerprint.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-title">KILL PLAY INTEGRITY</div>
+  <div style="margin-bottom:8px;">Developed by <span style="color:var(--accent);">Nox (vphcity)</span> · Powered by <span style="color:var(--accent2);">osm0sis fork core</span></div>
+  <div>v16.0-Nox · Android · MIT-style Open Source</div>
+</footer>
+
+<script>
+  // ─── REVEAL ON SCROLL ───
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ─── COPY BUTTON ───
+  function copyCmd(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'COPIED!';
+      btn.style.color = 'var(--accent)';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
